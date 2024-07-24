@@ -9,8 +9,7 @@
     "esModuleInterop": true
   },
   "include": [
-    "src/**/*"
-  ],
+    "src/**/*", "src/controllers/city"  ],
   "exclude": [
     "node_modules",
     "dist"
