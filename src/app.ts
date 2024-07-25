@@ -8,6 +8,10 @@ import ForgetRouter from './controllers/auth/forgetPassword';
 import ResetRouter from './controllers/auth/resetPassword';
 import States from './controllers/state/state';
 import City from './controllers/city/city';
+// import ChangeRouter from './controllers/auth/changePassword';
+// import { changePassword } from './controllers/auth/changePassword';
+import changePassword from './controllers/auth/changePassword';
+
 
 const app: Application = express();
 const port: number = parseInt(process.env.PORT || '3000', 10);
@@ -16,13 +20,15 @@ connectDB();
 
 app.use(express.json());
 app.use(bodyParser.json());
-
 app.use(UserRouter);
 app.use(LoginRouter);
 app.use(ForgetRouter);
 app.use(ResetRouter);
 app.use(States);
 app.use(City);
+// app.use(ChangeRouter);
+app.use(changePassword);
+
 
 app.listen(port, (): void => {
   console.log(`Connectivity with the port ${port}`);
