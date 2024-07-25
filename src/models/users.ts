@@ -7,7 +7,6 @@ interface IUser extends Document {
   password: string;
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
-  
 }
 
 const userSchema: Schema<IUser> = new Schema({
