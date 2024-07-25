@@ -14,7 +14,7 @@ router.post("/createUser", async (req: Request, res: Response) => {
   try {
     validateEmail(req.body.email);
 
-    const { first_Name, last_Name, email, confirm_Password } = req.body;
+    const { firstName, lastName, email, confirmPassword } = req.body;
     const password = req.body.password;
 
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
@@ -26,7 +26,7 @@ router.post("/createUser", async (req: Request, res: Response) => {
       });
     }
 
-    if (password !== confirm_Password) {
+    if (password !== confirmPassword) {
       return res.status(400).json({
         error: "Passwords do not match"
       });
@@ -34,7 +34,7 @@ router.post("/createUser", async (req: Request, res: Response) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new Users({ first_Name, last_Name, email, password: hashedPassword });
+    const newUser = new Users({ firstName, lastName, email, password: hashedPassword });
     const savedUser = await newUser.save();
     res.status(201).json({
       status: true,
