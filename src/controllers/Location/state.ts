@@ -2,9 +2,27 @@ import express, { Request, Response, Router } from 'express';
 const router: Router = express.Router();
 import State from '../../models/stateSchema';
 
-router.get("/getAllStates", async (req: Request, res: Response) => {
+router.post("/createState", async (req: Request, res: Response) => {
     try {
-        const states = await State.find({});
+        const newState = new State(req.body);
+        const savedState = await newState.save();
+        res.status(200).json({
+            status: true,
+            message: "State created successfully",
+            result: savedState
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: false,
+            message: "Error creating state",
+            result: error
+        });
+    }
+});
+
+router.get("/country/:countryId/getState", async (req: Request, res: Response) => {
+    try {
+        const states = await State.find({ countryId : req.params.countryId});
         res.status(200).json({
             status: true,
             message: "States fetched successfully",
@@ -45,29 +63,9 @@ router.get("/getState/:id", async (req: Request, res: Response) => {
 });
 
 
-router.post("/createStates", async (req: Request, res: Response) => {
-    try {
-        const { name, abbreviation } = req.body;
-        const newState = new State({ name, abbreviation });
-        const savedState = await newState.save();
-        res.status(201).json({
-            status: true,
-            message: "State created successfully",
-            result: savedState
-        });
-    } catch (error) {
-        res.status(500).json({
-            status: false,
-            message: "Error creating state",
-            result: error
-        });
-    }
-});
-
-
 router.put("/updateState/:id", async (req: Request, res: Response) => {
     try {
-        const { name, abbreviation } = req.body;
+        const { name,abbreviation} = req.body;
         const updatedState = await State.findByIdAndUpdate(
             req.params.id,
             { name, abbreviation },
