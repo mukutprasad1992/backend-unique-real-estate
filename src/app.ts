@@ -6,10 +6,10 @@ import UserRouter from './controllers/auth/createUser';
 import LoginRouter from './controllers/auth/login';
 import ForgetRouter from './controllers/auth/forgetPassword';
 import ResetRouter from './controllers/auth/resetPassword';
-
-import States from './controllers/state/state';
-import City from './controllers/city/city';
-import Block from './controllers/city/block';
+import States from './controllers/Location/state';
+import City from './controllers/Location/city';
+import Block from './controllers/Location/block';
+import Country from "./controllers/Location/country";
 
 const app: Application = express();
 const port: number = parseInt(process.env.PORT || '3000', 10);
@@ -22,6 +22,7 @@ app.use(UserRouter);
 app.use(LoginRouter);
 app.use(ForgetRouter);
 app.use(ResetRouter);
+app.use(Country);
 app.use(States);
 app.use(City);
 app.use(Block);
