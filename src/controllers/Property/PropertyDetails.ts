@@ -1,7 +1,7 @@
 import express ,{Request,Response,Router} from "express";
 const router : Router = express.Router();
-import PropertyDetailsModel from "../../models/Property/PropertyDetails";
-import PropertyDModel from "../../models/Property/PropertyDesc";
+import PropertyDetailsModel from "../../models/propertySchema/PropertyDetails";
+import PropertyDModel from "../../models/propertySchema/PropertyDesc";
 
 router.post("/createPropertyDetail",async(req:Request,res : Response)=>{
   const {propertyId} = req.body;
@@ -10,7 +10,7 @@ router.post("/createPropertyDetail",async(req:Request,res : Response)=>{
     if(!findProperty){
       return res.status(400).json({
         status : false,
-        mesage :"Property not found",
+        message :"Property not found",
         result : null
       });
     }
@@ -18,7 +18,7 @@ router.post("/createPropertyDetail",async(req:Request,res : Response)=>{
    if(!property){
     res.status(400).json({
       status : false,
-      mesage :"Missing required Field",
+      message :"Missing required Field",
       result : null
     });
    }
@@ -115,7 +115,3 @@ router.delete("/deletePropertyDetails/:id", async (req: Request, res: Response) 
 });
 
 export default router;
-
-
-
-

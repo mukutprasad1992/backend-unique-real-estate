@@ -1,6 +1,6 @@
 import express, { Request, Response, Router } from 'express';
 const router: Router = express.Router();
-import City from '../../models/citySchema';
+import City from '../../models/locationSchema/citySchema';
 
 // Add a new city
 router.post('/createCity', async (req: Request, res: Response) => {

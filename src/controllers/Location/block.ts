@@ -1,6 +1,6 @@
 import express, { Request, Response, Router } from 'express';
 const router: Router = express.Router();
-import Block from '../../models/BlockSchema';
+import Block from '../../models/locationSchema/blockSchema';
 
 // Add a new block
 router.post('/createBlock', async (req: Request, res: Response) => {

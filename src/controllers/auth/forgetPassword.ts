@@ -1,5 +1,5 @@
 import express, { Request, Response, Router } from 'express';
-import Users from '../../models/users';
+import Users from '../../models/usersSchema/users';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 

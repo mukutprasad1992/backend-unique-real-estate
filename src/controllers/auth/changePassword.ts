@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { Request, Response, Router } from 'express';
-import Users from '../../models/users';
+import Users from '../../models/usersSchema/users';
 
 const router = Router();
 

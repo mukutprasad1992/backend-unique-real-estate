@@ -1,6 +1,6 @@
 import express, { Request, Response, Router } from 'express';
 const router: Router = express.Router();
-import Country from '../../models/countrySchema';
+import Country from '../../models/locationSchema/countrySchema';
 
 router.get("/getAllCountry", async (req: Request, res: Response) => {
     try {

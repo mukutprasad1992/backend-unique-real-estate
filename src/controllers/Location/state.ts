@@ -1,6 +1,6 @@
 import express, { Request, Response, Router } from 'express';
 const router: Router = express.Router();
-import State from '../../models/stateSchema';
+import State from '../../models/locationSchema/stateSchema';
 
 router.post("/createState", async (req: Request, res: Response) => {
     try {
