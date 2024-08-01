@@ -1,4 +1,4 @@
-import mongoose ,{Schema,Document,Model, NumberExpression} from "mongoose";
+import mongoose ,{Schema,Document,Model} from "mongoose";
 interface IPropertyDetails extends Document{
   propertyId :mongoose.Schema.Types.ObjectId,
   homeArea : String;

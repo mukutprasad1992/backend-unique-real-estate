@@ -1,6 +1,6 @@
 import express,{Request,Response,Router} from 'express';
 const router : Router =express.Router();
-import Profile from '../../models/Profile';
+import Profile from '../../models/usersSchema/Profile';
 
 router.post("/createProfile",async(req:Request,res:Response)=>{
    try{

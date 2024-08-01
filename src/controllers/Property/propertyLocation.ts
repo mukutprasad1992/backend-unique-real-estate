@@ -1,9 +1,9 @@
 import express ,{Request,Response,Router} from "express";
 const router : Router = express.Router();
-import PropertyPriceModel from "../../models/propertySchema/PropertyPrice";
+import PropertyLocation from "../../models/propertySchema/propertyLocation";
 import PropertyDModel from "../../models/propertySchema/PropertyDesc";
 
-router.post("/createPropertyPrice",async(req:Request,res : Response)=>{
+router.post("/createPropertyLocation",async(req:Request,res : Response)=>{
   const {propertyId} = req.body;
   try{
     const findProperty = await PropertyDModel.findOne({_id:propertyId});
@@ -14,7 +14,7 @@ router.post("/createPropertyPrice",async(req:Request,res : Response)=>{
         result : null
       });
     }
-   const property = new PropertyPriceModel(req.body);
+   const property = new PropertyLocation(req.body);
    if(!property){
     res.status(400).json({
       status : false,
@@ -25,21 +25,21 @@ router.post("/createPropertyPrice",async(req:Request,res : Response)=>{
   const savedProperty = await property.save();
   res.status(201).json({
     status : true,
-    message : "Property price added successfully",
+    message : "Property location added successfully",
     result : savedProperty
   })
 
   }catch(error:any){
     res.status(500).json({
       status: false,
-      message: "Error creating property Price",
+      message: "Error creating property Location",
       result: error
   });}
 });
 
-router.get("/property/:propertyDescId/getPropertyPrice", async (req: Request, res: Response) => {
+router.get("/property/:propertyDescId/getPropertyLocation", async (req: Request, res: Response) => {
   try {
-      const findProperty = await PropertyPriceModel.findOne({ propertyId : req.params.propertyDescId});
+      const findProperty = await PropertyLocation.findOne({ propertyId : req.params.propertyDescId});
       if(!findProperty){
         return res.status(400).json({
           status : false,
@@ -49,66 +49,65 @@ router.get("/property/:propertyDescId/getPropertyPrice", async (req: Request, re
       }
       res.status(200).json({
           status: true,
-          message: "User Property Price fetched successfully",
+          message: "User Property Location fetched successfully",
           result: findProperty
       });
   } catch (error) {
       res.status(500).json({
           status: false,
-          message: "Error fetching Users Property Price",
+          message: "Error fetching Users Property Location",
           result: error
       });
   }
 });
 
-router.put("/updatePropertyPrice/:id", async (req: Request, res: Response) => {
+router.put("/updatePropertyLocation/:id", async (req: Request, res: Response) => {
   try {
-      const {price,afterDate,beforeDate,yearlyTaxRate,HOAMonthly}= req.body;
-      const updatedProperty = await PropertyPriceModel.findByIdAndUpdate(
+      const updatedProperty = await PropertyLocation.findByIdAndUpdate(
           req.params.id,
-          {price,afterDate,beforeDate,yearlyTaxRate,HOAMonthly},
+          req.body,
           { new: true }
       );
       if (!updatedProperty) {
           return res.status(404).json({
               status: false,
-              message: "Property price not found",
+              message: "Property location not found",
               result: null
           });
       }
       res.status(200).json({
           status: true,
-          message: "Property Price updated successfully",
+          message: "Property Location updated successfully",
           result: updatedProperty
       });
   } catch (error) {
       res.status(500).json({
           status: false,
-          message: "Error updating property price",
+          message: "Error updating property location",
           result: error
       });
   }
 });
 
-router.delete("/deletePropertyPrice/:id", async (req: Request, res: Response) => {
+router.delete("/deletePropertyLocation/:id", async (req: Request, res: Response) => {
   try {
-      const deletedProperty = await PropertyPriceModel.findByIdAndDelete(req.params.id);
+      const deletedProperty = await PropertyLocation.findByIdAndDelete(req.params.id);
       if (!deletedProperty) {
           return res.status(404).json({
               status: false,
-              message: "Property Price not found",
+              message: "Property Location not found",
               result: null
           });
       }
       res.status(200).json({
           status: true,
-          message: "Property Price deleted successfully",
+          message: "Property Location deleted successfully",
           result: deletedProperty
       });
   } catch (error) {
       res.status(500).json({
           status: false,
-          message: "Error deleting property Price",
+          message: "Error deleting property Location",
           result: error
       });
   }

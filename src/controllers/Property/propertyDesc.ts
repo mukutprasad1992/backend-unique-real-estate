@@ -1,7 +1,7 @@
 import express ,{Request,Response,Router} from "express";
 const router : Router = express.Router();
-import PropertyDescriptionModel from "../../models/Property/PropertyDesc";
-import Users from "../../models/users";
+import PropertyDescriptionModel from "../../models/propertySchema/PropertyDesc";
+import Users from "../../models/usersSchema/users";
 
 router.post("/createPropertyDescription",async(req:Request,res : Response)=>{
     const {userId} = req.body;

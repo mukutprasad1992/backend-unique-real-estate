@@ -15,6 +15,11 @@ import Country from "./controllers/Location/country";
 import PropertyDescription from "./controllers/Property/propertyDesc";
 import PropertyPrice from "./controllers/Property/propertyPrice";
 import PropertyDetails from "./controllers/Property/PropertyDetails";
+import PropertyAmenties from "./controllers/Property/propertyAmenties"
+import PropertyLocation from "./controllers/Property/propertyLocation";
+import PropertyMedia from "./controllers/Property/propertyMedia";
+import PropertyFloor from "./controllers/Property/propertyFloor";
+import PropertyOwner from "./controllers/Property/propertyOwner";
 
 const app: Application = express();
 const port: number = parseInt(process.env.PORT || '3000', 10);
@@ -36,6 +41,11 @@ app.use(Block);
 app.use(PropertyDescription);
 app.use(PropertyPrice);
 app.use(PropertyDetails);
+app.use(PropertyAmenties);
+app.use(PropertyLocation);
+app.use(PropertyMedia);
+app.use(PropertyFloor);
+app.use(PropertyOwner);
 
 app.listen(port, (): void => {
   console.log(`Connectivity with the port ${port}`);
