@@ -1,6 +1,6 @@
 import express ,{Request,Response,Router} from "express";
 const router : Router = express.Router();
-import PropertyPriceModel from "../../models/propertySchema/PropertyPrice";
+import PropertyPriceModel from "../../models/propertySchema/propertyPrice";
 import PropertyDModel from "../../models/propertySchema/PropertyDesc";
 
 router.post("/createPropertyPrice",async(req:Request,res : Response)=>{
