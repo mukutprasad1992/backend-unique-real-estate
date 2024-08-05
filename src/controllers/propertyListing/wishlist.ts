@@ -1,6 +1,7 @@
 import express ,{Request,Response,Router} from "express";
 const router : Router = express.Router();
-import wishlist from "../../models/propertyListingSchema/wishlist";
+import mongoose from "mongoose";
+import WishlistModel from "../../models/propertyListingSchema/wishlist";
 import Users from "../../models/usersSchema/users";
 import PropertyDModel from "../../models/propertySchema/PropertyDesc";
 
@@ -16,7 +17,7 @@ router.post("/createPropertyWishlist",async(req:Request,res : Response)=>{
         result : null
       });
     }
-    const existingWishlist = await wishlist.findOne({userId : userId});
+    const existingWishlist = await WishlistModel.findOne({userId : userId});
     if(existingWishlist){
       return res.status(400).json({
         status : false,
@@ -24,7 +25,7 @@ router.post("/createPropertyWishlist",async(req:Request,res : Response)=>{
         result : null
       });
     }
-   const addWishlist = new wishlist(req.body);
+   const addWishlist = new WishlistModel(req.body);
    if(!addWishlist){
     res.status(400).json({
       status : false,
@@ -43,13 +44,13 @@ router.post("/createPropertyWishlist",async(req:Request,res : Response)=>{
     res.status(500).json({
       status: false,
       message: "Error in adding wishlist property",
-      result: error
+      result: error.message
   });}
 });
 
 router.get("/wishlist/:userId", async (req: Request, res: Response) => {
   try {
-      const findWishProperty = await wishlist.findOne({ userId : req.params.userId});
+      const findWishProperty = await WishlistModel.findOne({ userId : req.params.userId});
       if(!findWishProperty){
         return res.status(400).json({
           status : false,
@@ -72,20 +73,39 @@ router.get("/wishlist/:userId", async (req: Request, res: Response) => {
 });
 
 router.post("/wishlist/:userid/items", async (req: Request, res: Response) => {
+  try {    
+    const userId = req.params.id;
+    const { name, selectedPropertyId, itemKey } = req.body;
+    if (!mongoose.Types.ObjectId.isValid(selectedPropertyId)) {
+      return res.status(400).json({
+        status: false,
+        message: "selectedPropertyId",
+        result: null
+      });
+    }
 
-  try {
-    const addWishProperty = await wishlist.findOne({ userId : req.params.userid});
-      if(!addWishProperty){
-        return res.status(400).json({
-          status : false,
-          mesage :"Wishlist not found",
-          result : null
-        });
-      }
+    // Ensure all required fields are provided
+    if (!name || !selectedPropertyId || !itemKey) {
+      return res.status(400).json({
+        status: false,
+        message: "Missing required fields in request body",
+        result: null
+      });
+    }
 
-      const itemExists = addWishProperty.items.some(item => item.selectedPropertyId.toString() === req.body.selectedPropertyId);
+    const wishlist = await WishlistModel.findOne({ userId: req.params.userid });
+      if (!wishlist) {
+      return res.status(400).json({
+        status: false,
+        message: "Wishlist not found",
+        result: null
+      });
+    }
 
-    if (itemExists) {
+    const propertyId = selectedPropertyId;
+
+    // Check if the property is already in the wishlist
+    if (wishlist.items.selectedPropertyId === propertyId) {
       return res.status(400).json({
         status: false,
         message: "Property already in wishlist",
@@ -93,74 +113,83 @@ router.post("/wishlist/:userid/items", async (req: Request, res: Response) => {
       });
     }
 
+    // Add or update the item in the wishlist
+    const newItem = {
+      name: name,
+      selectedPropertyId: new mongoose.Types.ObjectId(selectedPropertyId)
+    };
 
-      if (itemExists) {
-        return res.status(400).json({
-          status: false,
-          message: "Property already in wishlist",
-          result: null
-        });
-      } 
-
-    const addItem = addWishProperty.items.push(req.body);
-      await addWishProperty.save();
-      res.status(200).json({
-          status: true,
-          message: "User Wishlist item added successfully",
-          result: addItem
-      });
-  } catch (error) {
-      res.status(500).json({
-          status: false,
-          message: "Error in adding item Wishlist Property",
-          result: error
-      });
-  }
-});
-
-router.delete("/deletewishlist/:userId/items/:itemId", async (req: Request, res: Response) => {
-  try {
-    const { userId, itemId } = req.params;
-
-    if (!userId || !itemId) {
-      return res.status(400).json({
-        status: false,
-        message: 'userId and itemId are required',
-        result: null
-      });
-    }
-    const result = await wishlist.updateOne({ userId },{ $pull: { items: { _id: itemId } } } );
-
-    if (result.matchedCount === 0) {
+    const result = await WishlistModel.findOneAndUpdate(
+      { userId: req.params.userid },
+      { $set: { [`items.${itemKey}`]: newItem } }, // Add or update the nested object
+      { new: true, runValidators: true } // Return the updated document and validate schema
+    );
+    if (!result) {
       return res.status(404).json({
         status: false,
-        message: 'Wishlist not found',
-        result: null
-      });
-    }
-
-    if (result.modifiedCount === 0) {
-      return res.status(404).json({
-        status: false,
-        message: 'Item not found in the wishlist',
+        message: "Wishlist not found or failed to update",
         result: null
       });
     }
 
     res.status(200).json({
       status: true,
-      message: 'Item removed from wishlist successfully',
+      message: "User Wishlist item added successfully",
       result: result
     });
-
   } catch (error) {
-      res.status(500).json({
-          status: false,
-          message: "Error in deleting wishlist item",
-          result: error
-      });
+    console.log(error);
+    res.status(500).json({
+      status: false,
+      message: "Error in adding item to Wishlist",
+      result: error
+    });
   }
 });
+
+router.delete("/wishlist/:userid/items/:itemKey", async (req: Request, res: Response) => {
+  try {
+    const userId = req.params.userid;
+    const itemKey = req.params.itemKey;
+
+    // Validate input
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid userId",
+        result: null
+      });
+    }
+
+    // Find and update the wishlist document
+    const updatedWishlist = await WishlistModel.findOneAndUpdate(
+      { userId: userId },
+      { $unset: { [`items.${itemKey}`]: "" } }, // Remove the item from the map
+      { new: true }
+    );
+
+    if (!updatedWishlist) {
+      return res.status(404).json({
+        status: false,
+        message: "Wishlist not found or item not removed",
+        result: null
+      });
+    }
+
+    res.status(200).json({
+      status: true,
+      message: "Item removed from Wishlist successfully",
+      result: updatedWishlist.items
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "Error in removing item from Wishlist",
+      result: error
+    });
+  }
+});
+
 
 export default router;
 
